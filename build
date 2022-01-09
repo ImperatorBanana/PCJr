@@ -1,0 +1,5 @@
+if [[ ! -d bin ]]; then
+	mkdir bin
+fi
+echo "Building multirom_crc" >&2;
+gcc src/multirom_crc.c -o bin/multirom_crc.exe;
