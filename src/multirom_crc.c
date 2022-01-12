@@ -174,7 +174,6 @@ int main(int argc, char * argv[]){
 	int size_of_jrc_str = sizeof(jrc_str) / sizeof(jrc_str[0]);
 	str = (char *)malloc(size_of_jrc_str);
 
-	//fprintf(stderr,"Checking for JRC Header\n");
 	unsigned char terminator1;
 	unsigned char terminator2;
 	for (unsigned int i = 0; i < size_of_jrc_str-1; i++){
@@ -210,18 +209,12 @@ int main(int argc, char * argv[]){
 			entry1=rom[i+3];
 			entry2=rom[i+4];
 			entry3=rom[i+5];
-			//crc1=rom[i+end_of_rom-2];
-			//crc2=rom[i+end_of_rom-1];
 			union Reg orig_crc;
 			orig_crc.h=rom[i+end_of_rom-2];
 			orig_crc.l=rom[i+end_of_rom-1];
 			fprintf(stderr,"Found ROM Signature(%i) at %04Xh\n\tLength: %02Xh Blocks\n\tEntry: %02Xh %02Xh %02Xh\n\tCRC: %02Xh %02Xh\n",num_roms,i,rom_k_len,entry1,entry2,entry3,(unsigned char)orig_crc.h,(unsigned char)orig_crc.l);
-			// I don't think it jumps to the end of the Block and continues, I think it just jumps 2048 and tries again
-			// TODO: Check this to match BIOS
-			
 			fprintf(stderr,"  Validating current CRC..."); // Intentionally no new-line
 			union Reg crc;
-			//crc.x = check_crc(i,i+end_of_rom);
 			crc.x = check_crc(i,end_of_rom);
 			
 			if(crc.h != 0 || crc.l != 0){
@@ -231,7 +224,6 @@ int main(int argc, char * argv[]){
 
 	
 				fprintf(stderr,"  Zero'd CRC, attempting to regenerate checksum\n");
-				//crc.x = compute_crc(i,i+end_of_rom);
 				crc.x = compute_crc(i,end_of_rom);
 				fprintf(stderr,"  New Checksum calculation: %02X,%02X\n",(unsigned char)crc.h,(unsigned char)crc.l);
 
@@ -243,7 +235,6 @@ int main(int argc, char * argv[]){
 			else {
 				fprintf(stderr," Valid.\n");
 			}
-			//i+=2048-1;
 			i+=end_of_rom-1;
 		}	
 		else {
